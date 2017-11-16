@@ -1,0 +1,27 @@
+var data = stream
+    |from()
+        .measurement('cpu')
+    |groupBy(*)
+    |eval(lambda: "usage_user", lambda: "usage_idle", lambda: "usage_system")
+        .as('usage_user', 'usage_idle', 'usage_system')
+    |window()
+        .period(1m)
+        .every(10s)
+        .fillPeriod()
+
+var user = data
+    |mean('usage_user')
+        .as('usage_user')
+
+var idle = data
+    |mean('usage_idle')
+        .as('usage_idle')
+
+var system = data
+    |mean('usage_system')
+        .as('usage_system')
+
+system
+    |join(user, idle)
+        .as('system', 'user', 'idle')
+    |log()

@@ -1,0 +1,19 @@
+var this_week = batch
+    |query('''
+SELECT count("usage_user") FROM "telegraf"."autogen"."cpu"
+''')
+        .period(1w)
+        .every(1m)
+
+var last_week = batch
+    |query('''
+SELECT count("usage_user") FROM "telegraf"."autogen"."cpu"
+''')
+        .period(1w)
+        .every(1m)
+        .offset(1w)
+    |shift(1m)
+
+this_week
+    |join(last_week)
+        .as('this', 'last')

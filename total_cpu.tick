@@ -1,0 +1,6 @@
+stream
+    |from()
+        .measurement('cpu')
+    |where(lambda: "cpu" == 'cpu-total')
+    |groupBy(*)
+        .eval(lambda: 100.0 - "cpu_idle")
