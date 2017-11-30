@@ -1,0 +1,34 @@
+// Create an initial stream of data from the cpu measurement
+// windowed into 30s buckets
+var cpu = stream
+    |from()
+        .measurement('cpu')
+        .groupBy(*)
+    |window()
+        .period(30s)
+        .every(30s)
+
+// Take the average of the `usage_user` field.
+// Since mean is an aggregate, all other fields
+// are dropped when you perform the aggregate
+var usage_user = cpu
+    |mean('usage_user')
+        .as('value')
+
+// Take the average of the `usage_user` field
+// Since mean is an aggregate, all other fields
+// are dropped when you perform the aggregate
+var usage_idle = cpu
+    |mean('usage_idle')
+        .as('value')
+
+// Perform the join. By default data is joined on timestamp
+// and whatever tags are in the groupby
+usage_user
+    |join(usage_idle)
+        .as('usage_user', 'usage_idle')
+    // The resulting values from the join are namespaced under their `as`
+    // values from the join
+    |eval(lambda: "usage_user.value" / "usage_idle.value")
+        .as('my_new_value')
+    |log()

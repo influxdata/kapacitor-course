@@ -1,0 +1,30 @@
+var cpu = stream
+    |from()
+        .measurement('cpu')
+    // Drop all tags except for `host`
+    |eval()
+        .tags('host')
+    |groupBy(*)
+    // Only keep the fields `usage_user` and `usage_idle`
+    // Doing this before the window will result in kapacitor
+    // using less RAM.
+    |eval()
+        .keep('usage_user', 'usage_idle')
+    |window()
+        .period(30s)
+        .every(30s)
+
+var usage_user = cpu
+    |mean('usage_user')
+        .as('value')
+
+var usage_idle = cpu
+    |mean('usage_idle')
+        .as('value')
+
+usage_user
+    |join(usage_idle)
+        .as('usage_user', 'usage_idle')
+    |eval(lambda: "usage_user.value" / "usage_idle.value")
+        .as('my_new_value')
+    |log()

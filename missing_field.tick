@@ -1,0 +1,29 @@
+// Create basic stream for the system measurement
+var data = stream
+    |from()
+        .measurement('system')
+
+// The Telegraf plugin `system` is structured in such a way
+// that not each point contains all fields so simply doing
+// data
+//    |eval(lambda: "load1" / "uptime")
+//        .as('ratio')
+//
+// will always error, since both fields are not always present.
+// As a result we need to use the `isPresent` function that checks
+// to see if a fields is always present.
+
+// Verify that the `load1` field is present.
+var load = data
+    |where(lambda: isPresent("load1"))
+
+// Verify that the `uptime` field is present.
+var uptime = data
+    |where(lambda: isPresent("uptime"))
+
+// Perform join on the resulting data.
+load
+    |join(uptime)
+        .as('l', 'u')
+    |eval(lambda: "l.load1" / "u.uptime")
+        .as('ratio')

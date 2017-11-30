@@ -1,0 +1,23 @@
+// Query the current minute
+var this_minute = batch
+    |query('''
+SELECT count("usage_user") FROM "telegraf"."autogen"."cpu"
+''')
+        .period(1m)
+        .every(1m)
+
+var last_minute = batch
+    |query('''
+SELECT count("usage_user") FROM "telegraf"."autogen"."cpu"
+''')
+        .period(1m)
+        .every(1m)
+        // This is what gives us the previous miniute of data
+        .offset(1m)
+    // we need to shift the previous minute forward
+    |shift(1m)
+
+this_minute
+    |join(last_minute)
+        .as('this', 'last')
+    |log()
