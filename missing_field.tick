@@ -6,6 +6,9 @@ var data = stream
 // The Telegraf plugin `system` is structured in such a way
 // that not each point contains all fields so simply doing
 // data
+// system,host=myhost load1=10  100000
+// system,host=myhost uptime=30 100000
+//
 //    |eval(lambda: "load1" / "uptime")
 //        .as('ratio')
 //

@@ -13,7 +13,7 @@ SELECT count("usage_user") FROM "telegraf"."autogen"."cpu"
         .period(1m)
         .every(1m)
         // This is what gives us the previous miniute of data
-        .offset(1m)
+        .offset(24h)
     // we need to shift the previous minute forward
     |shift(1m)
 

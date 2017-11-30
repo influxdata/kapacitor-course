@@ -1,10 +1,7 @@
 var cpu = stream
     |from()
         .measurement('cpu')
-    // Drop all tags except for `host`
-    |eval()
-        .tags('host')
-    |groupBy(*)
+        .groupBy(*)
     // Only keep the fields `usage_user` and `usage_idle`
     // Doing this before the window will result in kapacitor
     // using less RAM.
