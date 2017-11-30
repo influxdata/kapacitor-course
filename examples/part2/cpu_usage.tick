@@ -1,0 +1,10 @@
+stream
+    |from()
+        .measurement('cpu')
+    |groupBy(*)
+    |eval(lambda: 100.0 - "usage_idle")
+        .as('usage')
+    |influxDBOut()
+        .create()
+        .database('telegraf2')
+        .tag('source', 'kapacitor')

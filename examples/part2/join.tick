@@ -1,0 +1,27 @@
+var data = stream
+    |from()
+        .measurement('cpu')
+    |groupBy(*)
+    |window()
+        .period(30s)
+        .every(30s)
+
+var usage_user = data
+    |mean('usage_user')
+        .as('value')
+
+var usage_idle = data
+    |mean('usage_idle')
+        .as('value')
+
+var usage_system = data
+    |mean('usage_system')
+        .as('value')
+
+usage_user
+    |join(usage_idle, usage_system)
+        .as('usage_user', 'usage_idle', 'usage_system')
+    |eval(lambda: "usage_user.value" + "usage_system.value" + "usage_idle.value")
+        .keep()
+        .as('my_sweet_value')
+    |log()
