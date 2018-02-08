@@ -194,7 +194,8 @@ stream
         .database('stress')
         .retentionPolicy('autogen')
         .measurement('v0_mean_5_min')
-        .precision('s')```
+        .precision('s')
+```
 ## elap.tick 
 ```
 stream
