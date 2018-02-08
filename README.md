@@ -1,5 +1,3 @@
-# Misc TICKscript examples
-
 ## a_tick.tick 
 ```
 var testname = 'Test'
@@ -232,7 +230,7 @@ var data = batch
   |log()
 
 ```
-## fruit_company.tick 
+## fc.tick 
 ```
 var window_size = 20s
 
@@ -370,7 +368,6 @@ batch
 ```
 ## idk_1.tick 
 ```
-// kapacitor enable http_response_bailiff.tick
 var warn = 401
 
 var crit = 500
@@ -380,7 +377,7 @@ var threshold = 2
 stream
     |from()
         .measurement('http_response')
-        .where(lambda: "server" == 'http://bailiff-prd.valkyrie.net/api/v1/healthcheck')
+        .where(lambda: "server" == 'xxx')
         .groupBy('http_response_code', 'server', 'host')
     |where(lambda: "http_response_code" >= crit)
     |stats(1m)
@@ -526,11 +523,11 @@ stata
     |alert()
         // .id('{{ index .Tags "host"}}/rmqh_d-fail-ratio')
         .id('{{ index .Tags "hname"}}')
-        .message('KapAlert: us-east-1-dev-devops03-glb rmqh_d fail ratio {{.Level}}')
+        .message('xxx')
         .crit(lambda: "stat" > 0.0)
         .stateChangesOnly()
         // .flapping(0.25, 0.5)
-        .log('/Users/michaeldesa/tickscript/kap.log')
+        .log('xxx')
 ```
 ## l.tick 
 ```
@@ -627,7 +624,7 @@ var data = stream
         .retentionPolicy('default')
         .database('performance')
         .groupBy(*)
-    |where(lambda: "host" == 'C9SQL01.CLOUD9.NVMNETWORKS.COM')
+    |where(lambda: "host" == 'xxx')
 
 var c1 = data
     |where(lambda: isPresent("commands_select"))
@@ -903,7 +900,7 @@ var period = 1m
 var every = 20s
 
 var data = batch
-    |query('SELECT count(event_id) as alert_count FROM "azeti"."autogen".State')
+    |query('SELECT count(event_id) as alert_count FROM "a"."autogen".State')
         .period(period)
         .every(every)
         .groupBy(time(every), *)
@@ -925,7 +922,7 @@ mean_data
     |join(deriv_data)
         .as('mean', 'deriv')
     |influxDBOut()
-        .database('_azeti_analytics')
+        .database('_a_analytics')
         .measurement(measurement)
 
 mean_data
